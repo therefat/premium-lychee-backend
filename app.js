@@ -3,16 +3,20 @@ const dotenv = require('dotenv');
 dotenv.config()
 const express = require('express')
 const mongoose = require('mongoose')
+const setRoutes = require('./routes/routes')
 const app = express()
 const port = 8080
 
+
+
+app.use(express.urlencoded({extended: true}),)
+
 app.use(express.json())
-app.get('/',(req,res) => {
-    res.send('Hellow World')
-})
+
 console.log(`Your port is ${process.env.PORT}`);
 let PORT = process.env.PORT || 3000
-
+//using  routes from Routes Directory
+setRoutes(app)
 app.listen(PORT,() => {
     console.log('App is running on port 8080}');
     mongoose.connect( 
