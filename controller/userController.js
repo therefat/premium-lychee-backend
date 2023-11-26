@@ -1,17 +1,21 @@
 const User = require('../model/User')
 const Auth = require('../middleware/auth')
+const errorFormatter = require('../utils/validationErrorFormater')
 const {validationResult} = require('express-validator')
 exports.signupPostController = async (req,res) => {
     console.log(req.body)
-    const user = new User(req.body)
     const errors = validationResult(req)
+    
+    
     try {
-        if(!errors.isEmpty()){
-            throw new Error('please give correct information')
-        }
+        
+    if(!errors.isEmpty()){
+        return res.status(422).json({ errors: errors.formatWith(errorFormatter).mapped() })
+    }
+    const user = new User(req.body)
         await user.save()
         const token = await user.generateAuthToken() 
-        res.status(201).send({user,token,errors: errors.array()})
+        res.status(201).send({user,token})
         console.log('Accoutn created')
     } catch(e){
         // console.log(error.errors.password)
