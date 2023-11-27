@@ -33,8 +33,9 @@ exports.loginPostController = async (req,res) => {
         }
         const token = await user.generateAuthToken()
         res.json({token : token,LoggedIn : true})
-    } catch(Error){
-        res.status(400).send(Error)
+    } catch(error){
+        res.status(400).send({ errors: error.message })
+        console.log(error)
     }
 }
 exports.logoutController = async (req,res) => {
@@ -45,8 +46,8 @@ exports.logoutController = async (req,res) => {
         await req.user.save()
         res.send({LoggedIn : false})
         console.log('logout succeful')
-    } catch(Error) {
-        res.status(500).send(Error)
+    } catch(error) {
+        res.status(500).send(error)
     }
 
 }

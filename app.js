@@ -4,11 +4,15 @@ dotenv.config()
 const express = require('express')
 const mongoose = require('mongoose')
 const setRoutes = require('./routes/routes')
+const cors = require('cors')
 const app = express()
 const port = 8080
 
 
-
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}))
 app.use(express.urlencoded({extended: true}),)
 
 app.use(express.json())
