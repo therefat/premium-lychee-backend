@@ -7,8 +7,9 @@ const {
     logoutController
 } = require('../controller/userController')
 const signupValidator = require('../validator/auth/signupValidator.')
+const loginValidator = require('../validator/auth/loginValidator')
 router.post('/signup',signupValidator,signupPostController)
-router.post('/login',loginPostController)
+router.post('/login',loginValidator,loginPostController)
 router.post('/logout',Auth,logoutController)
 
 module.exports = router

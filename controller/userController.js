@@ -19,23 +19,30 @@ exports.signupPostController = async (req,res) => {
         console.log('Accoutn created')
     } catch(e){
         // console.log(error.errors.password)
-        console.log(e)
+        
         res.status(400).send(e)
         
     }
 
 }
 exports.loginPostController = async (req,res) => {
+    const errors = validationResult(req)
     try{
+        if(!errors.isEmpty()){
+            return res.status(422).json({ errors: errors.formatWith(errorFormatter).mapped() })
+        }
         const user = await User.findByCredentials(req.body.email,req.body.password)
         if(!user){
             throw new Error('User Dose not match')
         }
         const token = await user.generateAuthToken()
+        // res.cookie('token', token, { httpOnly: true });  
+        // res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
+        res.cookie('token', token, { httpOnly: true, path: '/' });
         res.json({token : token,LoggedIn : true})
     } catch(error){
         res.status(400).send({ errors: error.message })
-        console.log(error)
+        
     }
 }
 exports.logoutController = async (req,res) => {
