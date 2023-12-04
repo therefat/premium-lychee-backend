@@ -1,8 +1,12 @@
 const userRoutes = require('./userRoutes')
+const itemRoutes = require('./itemRoutes')
 const routes = [
     {
         path : "/auth",
         handler : userRoutes
+    },{
+        path : "/items",
+        handler : itemRoutes
     },{
         path: '/',
         handler : (req,res) =>{

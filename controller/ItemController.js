@@ -28,6 +28,7 @@ exports.itemPostController = async(req,res) => {
     }
 } 
 exports.singleItemGetController = async(req,res) => {
+    console.log(req.params.name)
     try{
         const item = await Item.findOne({name: req.params.name})
         if(!item){
