@@ -1,6 +1,7 @@
 const Item = require('../model/Item')
 const Auth = require('../middleware/auth') 
 exports.itemPostController = async(req,res) => {
+    console.log(req.user)
     if(req.file){
         
     }

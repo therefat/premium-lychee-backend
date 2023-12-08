@@ -1,24 +1,40 @@
 const jwt = require('jsonwebtoken')
 const User = require('../model/User')
-const auth = async(req,res,next) => {
+const auth = async (req,res,next) => {
     // console.log(req.header('Authorization'))
     try{
-        const token = req.header('Authorization').replace('Bearer','') 
-        // console.log(token)
-        console.log(process.env.JWT_SECRET)
-        const decoded = await jwt.verify(token,process.env.JWT_SECRET)
-        
-        const user = await User.findOne({_id: decoded.data._id,'tokens.token': token})
       
+            const authorizationHeader = req.header('Authorization');
+            
+            if (!authorizationHeader) {
+                throw new Error('Authorization header is missing');
+            }
+        const token = req.header('Authorization').replace('Bearer','') 
+      
+        console.log(process.env.JWT_SECRET)
+        
+        
+       
+        const decoded = await jwt.verify(token,process.env.JWT_SECRET)
+       console.log(decoded)
+        
+        const user = await User.findOne({_id: decoded.data._id,}) 
+        // 'tokens.token' : token}
+        console.log(user)
+     
         if(!user){
             throw new Error
         }
         req.token = token
         req.user = user
-        res.send({succes : true})
+      next()
+       
     } catch(error){
-        res.status(401).send({error: "Authentication required"})
+        console.log(error)
+        res.status(401).send({error: "Authentication required"}) 
+      
 
     }
 }
+
 module.exports = auth

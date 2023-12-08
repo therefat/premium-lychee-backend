@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
     trim : true,
    
   },
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: 'user',
+  },
   tokens : [{
     token : {
         type : String,
@@ -48,6 +53,7 @@ userSchema.methods.generateAuthToken = async function () {
       expiresIn: '2d'
   }) 
   user.tokens = user.tokens.concat({token})
+
   await user.save()
   return token
 }
@@ -77,6 +83,7 @@ userSchema.pre('save',async function(next){
   next()
 })
 const User = mongoose.model('User', userSchema)
+
 module.exports = User;
 
 
