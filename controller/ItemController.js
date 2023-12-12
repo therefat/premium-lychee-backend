@@ -25,7 +25,7 @@ exports.itemPostController = async(req,res) => {
         res.status(201).send(newItem)
     } catch(error){
         console.log(error)
-        res.status(400).send({})
+        res.status(400).send({success : false})
     }
 } 
 exports.singleItemGetController = async(req,res) => {
@@ -40,7 +40,20 @@ exports.singleItemGetController = async(req,res) => {
     }catch(error){
         res.status(400).send(error)
     }
-} 
+}  
+exports.singleItemsGetController = async(req,res) => {
+    console.log(req.params.id)
+    try{
+        const item = await Item.findOne({_id: req.params.id})
+        if(!item){
+            res.status(404).send({error: "Item not found"})
+        }
+        console.log(item)
+        res.status(200).json({success: true,item})
+    }catch(error){
+        res.status(400).send(error)
+    }
+}
 exports.getAllItemController = async(req,res) => {
     try{
         const items = await Item.find({})
@@ -49,29 +62,39 @@ exports.getAllItemController = async(req,res) => {
         res.status(400).send(error)
     }
 }
-exports.updateItemtController = async(req,res) => {
-    const updates = Object.keys(req.body)
-    const url = req.protocol + '://' + req.get('host')
-    const allowedUpdates = ['name','description','category','price']
-    const isValidOperation = updates.every((update) =>    allowedUpdates.includes(update))
-   if(!isValidOperation) {
-     return res.status(400).send({ error: 'invalid updates'})
-}
-try{
-    const item = await Item.findOne({_id: req.params.id})
-    if(!item){
-        return res.status(404).send()
+exports.updateItemtController = async(req,res) => { 
+
+try {
+    const { id } = req.params;
+    const { name, description, category, price, attributeType, attributes } = req.body;
+    const imagePath = req.file ? req.file.path : null;
+
+    const updatedItem = {
+      name,
+      description,
+      category,
+      price,
+      attributeType,
+      attributes,
+    };
+
+    if (imagePath) {
+      updatedItem.image = imagePath;
     }
-    updates.forEach((update) => item[update] = req.body[update])
-    if (req.file) {
-        // If there is an uploaded image, update the image filename
-        item.image = url + '/public/uploads/productImage/' + req.file.filename
-      }
-    await item.save()
-    res.send(item)
-} catch(error){
-    res.status(400).send(error)
-}
+
+    await Item.findByIdAndUpdate(id, updatedItem);
+    
+    // Delete the uploaded file after it's used (if any)
+    if (imagePath) {
+      fs.unlinkSync(imagePath);
+    }
+
+    res.json({ success: true, message: 'Item updated successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+
 }
 exports.deleteItem = async(req,res) => {
     try {

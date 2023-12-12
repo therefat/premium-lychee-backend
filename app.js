@@ -9,13 +9,22 @@ const app = express()
 const port = 8080
 
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true
-}))
+// enabling cors for all routes 
+app.use(cors())
+// setting up cors headers
+app.use((req, res,next) => {
+  res.header('Access-Control-Allow-Origin', '*'); 
+  res.header('Access-Control-Allow-Methods', 'GET, POST,PATCH, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next()
+});
+app.use(express.json())
 app.use(express.urlencoded({extended: true}),)
 
-app.use(express.json())
+
+app.use("/public", express.static("public"));
+
+
 
 console.log(`Your port is ${process.env.PORT}`);
 let PORT = process.env.PORT || 3000

@@ -27,6 +27,11 @@ const itemSchema = new mongoose.Schema({
         type: String,
         required : true
     },
+
+    attributeType: {
+        type : String
+    },
+
     attributes : [
         {
             attribute_quantity  : {
@@ -34,6 +39,9 @@ const itemSchema = new mongoose.Schema({
             },
             attribute_price: {
                 type :String
+            },
+            attribute_type : {
+                type: String
             }
         }
     ]
