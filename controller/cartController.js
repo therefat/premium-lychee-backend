@@ -17,18 +17,37 @@ exports.getCart = async(req,res) => {
 } 
 exports.postCart = async(req,res) => {
     const owner = req.user._id;
-  const { itemId, quantity } = req.body;
+  const { itemId, quantity,attribute_price  } = req.body; 
+  
 
   try {
     const cart = await Cart.findOne({ owner });
-    const item = await Item.findOne({ _id: itemId });
+    const item = await Item.findOne({ _id: itemId }); 
+    console.log(item)
 
     if (!item) {
       res.status(404).send({ message: "item not found" });
       return;
+    } 
+    let selectedAttribute; 
+    if(item.attributes && attribute_price){
+      selectedAttribute = item.attributes.find(attr => attr.attribute_price === attribute_price); 
+      if (!selectedAttribute) {
+        return res.status(400).json({ error: 'Selected varient not available for this item' });
+    } 
+    }else { 
+      console.log('test')
+      selectedAttribute = {
+        attribute_price: item.price, 
+        attribute_quantity : item.quantity,
+        attribute_type: 'Default',
+    };
     }
-    const price = item.price;
+    console.log(selectedAttribute)
+    const price = selectedAttribute.attribute_price;
     const name = item.name;
+    const image = item.image 
+    console.log(image)
     //If cart already exists for user,
     if (cart) {
       const itemIndex = cart.items.findIndex((item) => item.itemId == itemId);
@@ -46,7 +65,7 @@ exports.postCart = async(req,res) => {
         await cart.save();
         res.status(200).send(cart);
       } else {
-        cart.items.push({ itemId, name, quantity, price });
+        cart.items.push({ itemId, name,image, quantity, price });
         cart.bill = cart.items.reduce((acc, curr) => {
             return acc + curr.quantity * curr.price;
         },0)
@@ -58,7 +77,7 @@ exports.postCart = async(req,res) => {
       //no cart exists, create one
       const newCart = await Cart.create({
         owner,
-        items: [{ itemId, name, quantity, price }],
+        items: [{ itemId, name,image, quantity, price }],
         bill: quantity * price,
       });
       return res.status(201).send(newCart);
@@ -70,7 +89,8 @@ exports.postCart = async(req,res) => {
 } 
 exports.cartDelete = async(req,res) => {
     const owner = req.user._id;
-    const itemId = req.query.itemId;
+    const itemId = req.query.itemId; 
+    console.log(itemId,'test')
      try {
        let cart = await Cart.findOne({ owner });
    
