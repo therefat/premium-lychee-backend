@@ -154,10 +154,7 @@ exports.updatedAddressController = async (req,res) => {
     }else{
       userAddress.address[addressToUpdateIndex] = { ...userAddress.address[addressToUpdateIndex], ...updateData };
     }
-    // Update the address with the new data
     
-
-    // Save the updated document
     await userAddress.save();
 
     res.json({ message: 'Address updated successfully' });
@@ -167,3 +164,25 @@ exports.updatedAddressController = async (req,res) => {
   }
 
 } 
+exports.defaultAddressController = async (req,res) => {
+  const owner = req.user 
+  try {
+    const userAddress = await Address.findOne({ owner });
+
+    if (!userAddress) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    
+    const defaultAddress = userAddress.address.find(addr => addr.isDefault);
+
+    if (!defaultAddress) {
+      return res.status(404).json({ error: 'Default address not found' });
+    }
+
+    res.json(defaultAddress);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}

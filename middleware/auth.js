@@ -5,6 +5,7 @@ const auth = async (req,res,next) => {
     try{
       
             const authorizationHeader = req.header('Authorization');
+           
             
             if (!authorizationHeader) {
                 throw new Error('Authorization header is missing');
@@ -30,7 +31,7 @@ const auth = async (req,res,next) => {
       next()
        
     } catch(error){
-        console.log(error)
+        
         res.status(401).send({error: "Authentication required"}) 
       
 

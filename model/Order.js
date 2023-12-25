@@ -2,19 +2,27 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const orderSchema = new mongoose.Schema({
+
+    owner : {
+        type: ObjectId,
+        required : true,
+        ref : 'User'
+    },
+    user : {
+        name: String,
+        email: String,
+    },
     
-    name: String,
-    email: String,
-    shipping_details: {
+    shippingDetails: { 
         name: String,
         email: String,
         phone: String,
         city: String,
-        upzilla: String,
+        upzila: String,
         address: String,
         zip: String
     },
-    cartItems: [
+    orderItems: [
         {
             id: {
                 type: ObjectId
@@ -22,21 +30,42 @@ const orderSchema = new mongoose.Schema({
             itemsId: {
                 type: ObjectId
             },
-            itemsName: {  
+            name: {  
                 type: String
             },
-            itemsPrice: {
+            price: {
                 type: Number
+            },image: {
+                type : String
             },
-            qunatitys: { 
-                type: String
+            quantity: { 
+                type: Number
             }
         }
     ],
-    orderNote : String,
-    shipping_cost: Number,
-    bill: Number
-}, {
+    status: {
+        type: String,
+        enum: ['Pending', 'Approve','Processing', 'Courier','Shipped', 'Delivered'],
+        default: 'Pending',
+      },
+      orderNote : String,
+    subTottal : Number,
+    shippingCost: Number,
+    bill: Number,
+    paymentInfo : {
+        paymentMethod: {
+            type : String
+        },
+        transactionid : {
+            type : String
+        },
+        accountNo : String
+    }, 
+    
+    
+}, 
+
+{
     timestamps: true
 });
 

@@ -1,7 +1,8 @@
 const userRoutes = require('./userRoutes')
 const itemRoutes = require('./itemRoutes') 
 const cartRoutes = require('./cartRoutes') 
-const addressRoutes = require('./addressRoutes')
+const addressRoutes = require('./addressRoutes') 
+const orderRoutes = require('./ordersRoutes')
 const routes = [
     {
         path : "/auth",
@@ -15,6 +16,9 @@ const routes = [
     },{
         path : '/address',
         handler : addressRoutes
+    },{
+        path : "/order",
+        handler : orderRoutes
     },{
         path: '/',
         handler : (req,res) =>{
