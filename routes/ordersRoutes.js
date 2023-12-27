@@ -8,5 +8,5 @@ router.post('/newoders',auth,orderPostController)
 router.get('/corder',auth,userOrderController)
 router.get('/singleorder/:id',auth,getSingleOrderController)
 router.get('/allorder',auth,isAdmin,getAllOrder)
-router.patch('orderStatus',auth,isAdmin,orderStatus)
+router.patch('/orderstatus/:orderId',auth,isAdmin,orderStatus)
 module.exports = router
