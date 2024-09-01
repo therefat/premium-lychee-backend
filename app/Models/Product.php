@@ -11,7 +11,7 @@ class Product extends Model
     protected $fillable = [
         'name', 'description', 'category', 'price', 'image', 'attribute_type',
     ];
-    public function variations()
+    public function attributes()
     {
         return $this->hasMany(Product_variation::class);
     }
