@@ -18,12 +18,36 @@ class AdminController extends Controller
     }
     public function loginPost(Request $request)
     {
-//       
-        if(Auth::attempt($request->only('email', 'password'))){
-            $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
-            $success['name']= $user->
-        }
+//        $val = \Illuminate\Support\Facades\Validator::make($request->all(), [
+//            'email' => 'required|email',
+//            'password' => 'required',
+//        ]);
+//        if ($val->fails()) {
+//            return response()->json(['errors' => $val->errors()],400);
+//        }
+//        $credentials = $request->only('email', 'password');
+//        if(auth()->attempt($credentials)){
+//            return  response()->json(['message' => 'Login successful', 'user' => auth()->user()], 200);
+//        }
+//        return response()->json(['error' => 'Invalid email or password'], 401);
+        if (Auth::guard('admin')->attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
+            // Get the authenticated admin
+            $admin = Auth::guard('admin')->user();
+
+            // Create a token for the admin
+            $token = $admin->createToken('AdminToken')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token,
+                'admin' => $admin
+            ], 200);}
+        return response()->json([
+            'message' => 'Invalid credentials',
+        ], 401);
     }
 
   public  function register(Request $request)
