@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Role;
 use Dotenv\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -39,11 +40,13 @@ class AdminController extends Controller
 
             // Create a token for the admin
             $token = $admin->createToken('AdminToken')->plainTextToken;
+            $role = Role::findOrFail($admin->role_id);
 
             return response()->json([
                 'message' => 'Login successful',
                 'token' => $token,
-                'admin' => $admin
+                'admin' => $admin,
+                'role' => $role->name
             ], 200);}
         return response()->json([
             'message' => 'Invalid credentials',
