@@ -47,6 +47,7 @@ class AdminController extends Controller
                 'token' => $token,
                 'admin' => $admin,
                 'role' => $role->name
+
             ], 200);}
         return response()->json([
             'message' => 'Invalid credentials',
