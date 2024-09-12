@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('phone', 14);
             $table->string('password', 300);
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+            $table->string('remember_token', 100)->nullable();
+
             $table->timestamps();
         });
     }

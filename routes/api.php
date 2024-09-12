@@ -11,8 +11,12 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/login', 'login');
 
 });
+Route::group(['middleware'=>"adminAuth"], function () {
+    Route::post('categories/add',[CategoriesController::class,'store']);
+});
 Route::post('/item/addProduct',[ProductController::class,'addProduct']);
+Route::get('/item/getProduct/{id}',[ProductController::class,'show']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/admin/register',[AdminController::class,'register']);
 Route::post('/admin/login',[AdminController::class,'loginPost']);
-Route::post('categories/add',[CategoriesController::class,'store']);
+

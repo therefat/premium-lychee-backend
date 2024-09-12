@@ -19,7 +19,9 @@ return new class extends Migration
             $table->decimal('price', 10, 2)->nullable();
             $table->string('image')->nullable();
             $table->enum('attribute_type', ['kg', 'pieces']);
+//            $table->foreign(columns: 'attribute_id')->references('id')->on('product_variations');
             $table->timestamps();
+
         });
     }
 
