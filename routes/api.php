@@ -16,6 +16,7 @@ Route::group(['middleware'=>"adminAuth"], function () {
 });
 Route::post('/item/addProduct',[ProductController::class,'addProduct']);
 Route::get('/item/getProduct/{id}',[ProductController::class,'show']);
+Route::get('/item/getproduct',[ProductController::class,'getProduct']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
 Route::post('/admin/register',[AdminController::class,'register']);
 Route::post('/admin/login',[AdminController::class,'loginPost']);

@@ -72,4 +72,13 @@ class ProductController extends Controller
             'product' => $product
         ], 200);
     }
+    public function getProduct(){
+        $products = Product::all();
+        if(!$products){
+            return response()->json(['message' => 'Products not found'],);
+        }
+        return response()->json([
+            "products" => $products
+        ]);
+}
 }
