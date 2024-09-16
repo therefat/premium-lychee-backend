@@ -17,9 +17,10 @@ class AdminAuthMiddleware
     public function handle(Request $request, Closure $next,$role_id=null): Response
     {
 //        dd(Auth::guard('admin')->user());
-        if (!Auth::guard('admin')->check()) {
-            dd('Admin is not logged in');
-        }
+
+//        if (!Auth::guard('admin')->check()) {
+//            dd('Admin is not logged in');
+//        }
         if(!Auth::guard('admin')->check()){
             return response()->json([
                 'message' => 'Unauthorized'

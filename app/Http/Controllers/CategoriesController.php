@@ -24,6 +24,7 @@ public function store(Request $request){
     $validated = \Illuminate\Support\Facades\Validator::make($request->all(), [
         'name' => 'required',
         'description' => 'required',
+        'status' => 'required',
     ]);
     if($validated->fails()){
         return response()->json($validated->errors()->toJson(), 400);
