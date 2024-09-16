@@ -28,7 +28,9 @@ class ProductController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('product_images', 'public');
+
         }
+
 
         $product = Product::create([
             'name' => $request->name,
@@ -36,7 +38,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
 
             'price' => $request->price,
-            'image' => $imagePath,
+            'image' => asset('storage/' . $imagePath),
             'attribute_type' => $request->attributeType,
         ]);
 
