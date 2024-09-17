@@ -15,6 +15,10 @@ Route::controller(UserController::class)->group(function () {
 Route::group(['middleware'=>"adminAuth"], function () {
 
     Route::post('categories/add',[CategoriesController::class,'store']);
+    Route::post('/item/addProduct',[ProductController::class,'addProduct']);
+    Route::patch('/item/updateProduct/{id}',[ProductController::class,'updateProduct']);
+
+
 
 });
 
@@ -30,6 +34,8 @@ Route::delete('/admin/deleterole/{id}',[RoleController::class,'destroy']);
 //category
 Route::get('/admin/categories',[CategoriesController::class,'getCategories']);
 Route::delete('/admin/categories/{id}',[CategoriesController::class,'destroy']);
-Route::post('/item/addProduct',[ProductController::class,'addProduct']);
+
+
+
 
 
