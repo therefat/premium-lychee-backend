@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AddressBookController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\API\Product\ProductController;
 use App\Http\Controllers\Api\Role\RoleController;
@@ -11,6 +12,10 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/register', 'register');
     Route::post('/login', 'login');
 
+});
+Route::group(['middleware' => ['auth:sanctum']], function () {
+
+    Route::post('/user/addAddress',[AddressBookController::class,'store']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
