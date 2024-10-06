@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAddressBookRequest;
 use App\Http\Requests\UpdateAddressBookRequest;
+use Illuminate\Http\Request;
 use App\Models\AddressBook;
+
 
 class AddressBookController extends Controller
 {
@@ -14,7 +16,13 @@ class AddressBookController extends Controller
      */
     public function index()
     {
-        //
+
+        $owner = auth()->id();
+        $addressBook = AddressBook::where('user_id', $owner)->get();
+        return response()->json([
+            'message' => 'Success',
+            'addressBooks' => $addressBook
+        ]);
     }
 
     /**
@@ -51,7 +59,7 @@ class AddressBookController extends Controller
         else{
             if($validated['isDefault']){
                 AddressBook::where('user_id', $owner)->update(['isDefault' => false]);
-//                
+//
                 $newAddressBook = AddressBook::create($validated);
                 return response()->json(['success' => true, 'addressBook' => $newAddressBook], 201);
             }
@@ -60,7 +68,7 @@ class AddressBookController extends Controller
 
         }
 
-//       
+//
 
 
 
@@ -95,8 +103,67 @@ class AddressBookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AddressBook $addressBook)
+    /**
+     * Set an address as the default address for the user.
+     */
+    public function setDefaultAddress(Request $request, $addressId)
+    {
+        $user = auth()->user();
+
+        // Find the address book entry
+        $addressBook = AddressBook::where('id', $addressId)
+                                  ->where('user_id', $user->id)
+                                  ->first();
+
+        // Check if the address exists and belongs to the user
+        if (!$addressBook) {
+            return response()->json(['error' => 'Address not found or unauthorized'], 404);
+        }
+
+        // Set all other addresses as non-default
+        AddressBook::where('user_id', $user->id)->update(['isDefault' => false]);
+
+        // Set the selected address as default
+        $addressBook->isDefault = true;
+        $addressBook->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Default address updated successfully',
+            'addressBook' => $addressBook
+        ]);
+    }
+
+    public function destroy(Request $request,$addressId)
     {
         //
+        $user = auth()->user();
+
+        $addressBook = AddressBook::where('id', $addressId)
+                                  ->where('user_id', $user->id)
+                                  ->first();
+
+
+        if (!$addressBook) {
+            return response()->json(['error' => 'Address not found or unauthorized'], 404);
+        }
+
+        $wasDefault = $addressBook->isDefault;
+
+        $addressBook->delete();
+
+
+        if ($wasDefault) {
+            $newDefault = AddressBook::where('user_id', $user->id)->first();
+            if ($newDefault) {
+                $newDefault->isDefault = true;
+                $newDefault->save();
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Address deleted successfully',
+        ]);
     }
 }

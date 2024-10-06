@@ -16,6 +16,9 @@ Route::controller(UserController::class)->group(function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/user/addAddress',[AddressBookController::class,'store']);
+    Route::get('/user/getaddress',[AddressBookController::class,'index']);
+    Route::put('user/updateAddress/{addressId}',[AddressBookController::class,'setDefaultAddress']);
+    Route::delete('user/deleteAddress/{addressId}',[AddressBookController::class,'destroy']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
