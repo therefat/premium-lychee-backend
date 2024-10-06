@@ -37,10 +37,12 @@ class AddressBookController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreAddressBookRequest $request)
+
     {
         $validated = $request->validated();
+
 //        $isDefault = $validated['isDefault'];
-//        dd($validated);
+
         $owner = auth()->id();
         $validated['user_id'] = $owner;
         $addressBook = AddressBook::where('user_id', $owner)->first();
@@ -79,9 +81,19 @@ class AddressBookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(AddressBook $addressBook)
+    public function show(AddressBook $addressBook,$addressId)
     {
-        //
+        $user = auth()->user();
+        $addressBook = AddressBook::where('id', $addressId)
+                                  ->where('user_id', $user->id)
+                                  ->first();
+
+        if (!$addressBook) {
+            return response()->json(['error' => 'Address not found or unauthorized'], 404);
+        }
+
+        return response()->json($addressBook);
+
     }
 
     /**
@@ -95,9 +107,25 @@ class AddressBookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAddressBookRequest $request, AddressBook $addressBook)
+    public function update(UpdateAddressBookRequest $request, AddressBook $addressBook,$addressId)
     {
-        //
+        $validated = $request->validated();
+        $user = auth()->user();
+        $addressBook = AddressBook::where('id', $addressId)
+                                    ->where('user_id',$user->id)
+                                    ->first();
+        if (!$addressBook) {
+            return response()->json(['error' => 'Address not found or unauthorized'], 404);
+        }
+        if($validated['isDefault']){
+            $allAddress = AddressBook::where('user_id',$user->id)->update(['isDefault' => false]);
+
+            $addressBook->update($validated);
+            return response()->json(['success' => true, 'addressBook' => $addressBook], 200);
+        }
+        $addressBook->update($validated);
+        return response()->json(['success' => true, 'addressBook' => $addressBook]);
+
     }
 
     /**
@@ -147,6 +175,7 @@ class AddressBookController extends Controller
         if (!$addressBook) {
             return response()->json(['error' => 'Address not found or unauthorized'], 404);
         }
+
 
         $wasDefault = $addressBook->isDefault;
 

@@ -41,11 +41,15 @@ class UserController extends Controller
 public function login(Request $request): JsonResponse{
         if(Auth::attempt(['email'=>$request->email,'password'=>$request->password])){
         $user = Auth::user();
-        $success['token'] = $user->createToken('MyApp')->plainTextToken;
-        $success['name'] = $user->name;
+        $token= $user->createToken('MyApp')->plainTextToken;
+
         return response()->json([
         'message' => 'successfully loggedin',
-            'data' => $success]);
+            'token' => $token,
+            'name' => $user->name,
+            'id' => $user->id,
+            'email' => $user->email
+        ]);
 
         }
         else{

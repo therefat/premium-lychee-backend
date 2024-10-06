@@ -19,6 +19,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/user/getaddress',[AddressBookController::class,'index']);
     Route::put('user/updateAddress/{addressId}',[AddressBookController::class,'setDefaultAddress']);
     Route::delete('user/deleteAddress/{addressId}',[AddressBookController::class,'destroy']);
+    Route::get('user/singleAddress/{addressId}',[AddressBookController::class,'show']);
+    Route::put('user/editAddress/{addressId}',[AddressBookController::class,'update']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
