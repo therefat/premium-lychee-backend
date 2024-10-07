@@ -17,7 +17,7 @@ class AddressBookController extends Controller
     public function index()
     {
 
-        $owner = auth()->id();
+        $owner = auth()->guard('user')->id();
         $addressBook = AddressBook::where('user_id', $owner)->get();
         return response()->json([
             'message' => 'Success',
@@ -43,14 +43,18 @@ class AddressBookController extends Controller
 
 //        $isDefault = $validated['isDefault'];
 
-        $owner = auth()->id();
+       $owner = auth()->guard('user')->id();
+
+
+
         $validated['user_id'] = $owner;
         $addressBook = AddressBook::where('user_id', $owner)->first();
 
         if(!$addressBook) {
+            $validated['isDefault'] = true;
             $newAddressBook = AddressBook::create($validated);
-            $newAddressBook['user_id'] = $owner;
-            $validated['isDefault'] = true;// Set default value if not provided
+//            $newAddressBook['user_id'] = $owner;
+           // Set default value if not provided
             return response()->json([
                 'success' => true,
                 'message' => 'Address Book Created Successfully',
@@ -83,9 +87,11 @@ class AddressBookController extends Controller
      */
     public function show(AddressBook $addressBook,$addressId)
     {
-        $user = auth()->user();
+//        dd($addressId);
+        $owner = auth()->guard('user')->id();
+//        dd($owner);
         $addressBook = AddressBook::where('id', $addressId)
-                                  ->where('user_id', $user->id)
+                                  ->where('user_id', $owner)
                                   ->first();
 
         if (!$addressBook) {
@@ -110,15 +116,15 @@ class AddressBookController extends Controller
     public function update(UpdateAddressBookRequest $request, AddressBook $addressBook,$addressId)
     {
         $validated = $request->validated();
-        $user = auth()->user();
+        $user = auth()->guard('user')->id();
         $addressBook = AddressBook::where('id', $addressId)
-                                    ->where('user_id',$user->id)
+                                    ->where('user_id',$user)
                                     ->first();
         if (!$addressBook) {
             return response()->json(['error' => 'Address not found or unauthorized'], 404);
         }
         if($validated['isDefault']){
-            $allAddress = AddressBook::where('user_id',$user->id)->update(['isDefault' => false]);
+            $allAddress = AddressBook::where('user_id',$user)->update(['isDefault' => false]);
 
             $addressBook->update($validated);
             return response()->json(['success' => true, 'addressBook' => $addressBook], 200);
@@ -136,11 +142,12 @@ class AddressBookController extends Controller
      */
     public function setDefaultAddress(Request $request, $addressId)
     {
-        $user = auth()->user();
+        $user = auth()->guard('user')->id();
+
 
         // Find the address book entry
         $addressBook = AddressBook::where('id', $addressId)
-                                  ->where('user_id', $user->id)
+                                  ->where('user_id', $user)
                                   ->first();
 
         // Check if the address exists and belongs to the user
@@ -149,7 +156,7 @@ class AddressBookController extends Controller
         }
 
         // Set all other addresses as non-default
-        AddressBook::where('user_id', $user->id)->update(['isDefault' => false]);
+        AddressBook::where('user_id', $user)->update(['isDefault' => false]);
 
         // Set the selected address as default
         $addressBook->isDefault = true;
@@ -165,10 +172,10 @@ class AddressBookController extends Controller
     public function destroy(Request $request,$addressId)
     {
         //
-        $user = auth()->user();
+        $user = auth()->guard('user')->id();
 
         $addressBook = AddressBook::where('id', $addressId)
-                                  ->where('user_id', $user->id)
+                                  ->where('user_id', $user)
                                   ->first();
 
 

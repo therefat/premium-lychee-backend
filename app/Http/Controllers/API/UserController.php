@@ -48,7 +48,8 @@ public function login(Request $request): JsonResponse{
             'token' => $token,
             'name' => $user->name,
             'id' => $user->id,
-            'email' => $user->email
+            'email' => $user->email,
+            'role' => $user->role,
         ]);
 
         }

@@ -13,7 +13,7 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/login', 'login');
 
 });
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::middleware('userAuth')->group(function () {
 
     Route::post('/user/addAddress',[AddressBookController::class,'store']);
     Route::get('/user/getaddress',[AddressBookController::class,'index']);

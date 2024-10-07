@@ -14,26 +14,25 @@ class AdminAuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next,$role_id=null): Response
+    public function handle(Request $request, Closure $next, $role_id = null): Response
     {
-//        dd(Auth::guard('admin')->user());
-
-//        if (!Auth::guard('admin')->check()) {
-//            dd('Admin is not logged in');
-//        }
-        if(!Auth::guard('admin')->check()){
+        //
+        if (!Auth::guard('admin')->check()) {
             return response()->json([
                 'message' => 'Unauthorized'
-            ],401);
+            ], 401);
         }
         $admin = Auth::guard('admin')->user();
         $adminRole = $admin->role_id;
-        if($role_id && $adminRole == $role_id){
+
+
+        if ($role_id && $adminRole != $role_id) {
             return response()->json([
                 'message' => 'Forbidden. Insufficient role permissions'
-            ],403);
+            ], 403);
         }
 
         return $next($request);
     }
+
 }
