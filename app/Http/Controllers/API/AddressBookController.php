@@ -168,7 +168,18 @@ class AddressBookController extends Controller
             'addressBook' => $addressBook
         ]);
     }
+ public function getDefaultAddress(){
+    $user = auth()->guard('user')->id();
+    $addressBook = AddressBook::where('user_id', $user)
+                              ->where('isDefault', true)
+                              ->first();
 
+    if (!$addressBook) {
+        return response()->json(['error' => 'Default address not found'], 404);
+    
+ }
+ return response()->json($addressBook);
+}
     public function destroy(Request $request,$addressId)
     {
         //

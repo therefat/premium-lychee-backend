@@ -21,12 +21,16 @@ Route::middleware('userAuth')->group(function () {
     Route::delete('user/deleteAddress/{addressId}',[AddressBookController::class,'destroy']);
     Route::get('user/singleAddress/{addressId}',[AddressBookController::class,'show']);
     Route::put('user/editAddress/{addressId}',[AddressBookController::class,'update']);
+    Route::get('user/getDefaultAddress',[AddressBookController::class,'getDefaultAddress']);
+
+    Route::post('/order/neworder',[\App\Http\Controllers\api\OrderController::class,'store']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
     Route::post('categories/add',[CategoriesController::class,'store']);
     Route::post('/item/addProduct',[ProductController::class,'addProduct']);
     Route::patch('/item/updateProduct/{id}',[ProductController::class,'updateProduct']);
+    Route::get('order/allorder',[\App\Http\Controllers\api\OrderController::class,'show']);
 
 
 
