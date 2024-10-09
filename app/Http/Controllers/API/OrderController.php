@@ -24,9 +24,12 @@ class OrderController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function userOrder()
     {
-        //
+        $user = auth()->guard('user')->id();
+
+        $userOrder = Order::with('orderItems')->where('owner_id', $user)->get();
+        return response()->json($userOrder);
     }
 
     /**

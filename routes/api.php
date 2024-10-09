@@ -24,13 +24,14 @@ Route::middleware('userAuth')->group(function () {
     Route::get('user/getDefaultAddress',[AddressBookController::class,'getDefaultAddress']);
 
     Route::post('/order/neworder',[\App\Http\Controllers\api\OrderController::class,'store']);
+    Route::get('/order/getallorder',[\App\Http\Controllers\api\OrderController::class,'userOrder']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
     Route::post('categories/add',[CategoriesController::class,'store']);
     Route::post('/item/addProduct',[ProductController::class,'addProduct']);
     Route::patch('/item/updateProduct/{id}',[ProductController::class,'updateProduct']);
-    Route::get('order/allorder',[\App\Http\Controllers\api\OrderController::class,'show']);
+    Route::get('order/allorder',[\App\Http\Controllers\api\OrderController::class,'index']);
 
 
 
