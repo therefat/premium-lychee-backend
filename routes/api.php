@@ -25,6 +25,11 @@ Route::middleware('userAuth')->group(function () {
 
     Route::post('/order/neworder',[\App\Http\Controllers\api\OrderController::class,'store']);
     Route::get('/order/getallorder',[\App\Http\Controllers\api\OrderController::class,'userOrder']);
+
+});
+//->middleware();
+Route::group(['middleware' => ['auth:sanctum']], function() {
+    Route::get('/order/getorder/{id}',[\App\Http\Controllers\api\OrderController::class,'show']);
 });
 Route::group(['middleware'=>"adminAuth"], function () {
 
@@ -32,6 +37,8 @@ Route::group(['middleware'=>"adminAuth"], function () {
     Route::post('/item/addProduct',[ProductController::class,'addProduct']);
     Route::patch('/item/updateProduct/{id}',[ProductController::class,'updateProduct']);
     Route::get('order/allorder',[\App\Http\Controllers\api\OrderController::class,'index']);
+//    Route::get('/order/getorders/{id}',[\App\Http\Controllers\api\OrderController::class,'show']);
+    Route::patch('order/updateOrder/{id}',[\App\Http\Controllers\api\OrderController::class,'updateStatus']);
 
 
 

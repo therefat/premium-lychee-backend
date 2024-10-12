@@ -112,6 +112,30 @@ class OrderController extends Controller
     public function show(string $id)
     {
         //
+
+        if(auth()->guard('admin')->check()){
+
+            $order = Order::with('orderItems')->find($id);
+           if(!$order){
+               return response()->json([
+                   'message' => 'Order not found'
+               ],404);
+           }
+            return response()->json($order);
+        }
+        $owner = auth()->guard('user')->id();
+        if(!$owner){
+            return response()->json([
+                'message' => 'You must be login'
+            ],401);
+        }
+        $order = Order::with('orderItems')->where('owner_id', $owner)->find($id);
+        if(!$order){
+            return response()->json([
+                'message' => 'Order not found'
+            ],400);
+        }
+        return response()->json($order);
     }
 
     /**
@@ -125,9 +149,41 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateStatus(Request $request, string $id)
     {
-        //
+        $owner = auth()->guard('user')->id();
+
+        try {
+            $order = Order::findOrFail($id);
+
+            // Validate the request
+            $request->validate([
+                'status' => 'required|string|in:Pending,Approve,Processing,Courier,Shipped,Delivered',
+            ]);
+
+            // Update the order status
+            $order->status = $request->status;
+            $order->save();
+
+            return response()->json([
+                'message' => 'Order status updated successfully',
+                'order' => $order
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Order not found'
+            ], 404);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while updating the order status',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
